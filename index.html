@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GazCamer Ngaoundéré | Réservation Rapide</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #f1c40f;   
+            --secondary: #0a192f; 
+            --dark-acc: #112240;  
+            --text-light: #ccd6f6;
+            --white: #ffffff;
+            --success: #2ecc71;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--secondary); color: var(--text-light); overflow-x: hidden; }
+
+        /* NAVIGATION FIXE */
+        nav {
+            background: rgba(10, 25, 47, 0.98);
+            padding: 12px 5%;
+            display: flex; flex-direction: column; align-items: center;
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            border-bottom: 2px solid var(--primary);
+        }
+        .logo { font-size: 1.2rem; font-weight: 800; color: var(--white); margin-bottom: 10px; text-transform: uppercase; }
+        .logo span { color: var(--primary); }
+
+        .nav-links { display: flex; gap: 5px; width: 100%; justify-content: center; }
+        .nav-links button {
+            background: rgba(255,255,255,0.05); border: none; 
+            padding: 10px; border-radius: 12px; cursor: pointer; 
+            font-weight: 600; color: var(--text-light); font-size: 0.75rem;
+            flex: 1; max-width: 100px;
+        }
+        .nav-links button.active-nav { background: var(--primary); color: var(--secondary); }
+
+        /* SECTIONS */
+        .container { padding: 160px 15px 50px; display: none; min-height: 100vh; }
+        .container.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #accueil {
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            padding: 0 20px; text-align: center;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px 20px; border-radius: 25px; width: 100%;
+        }
+
+        .btn-main {
+            background: var(--primary); color: var(--secondary);
+            padding: 18px; border-radius: 15px; border: none;
+            font-size: 1rem; font-weight: 800; width: 100%;
+            text-transform: uppercase; box-shadow: 0 5px 15px rgba(241, 196, 15, 0.2);
+        }
+
+        /* FORMULAIRE */
+        .form-card { background: var(--dark-acc); padding: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .form-card h2 { color: var(--white); margin-bottom: 20px; text-align: center; font-size: 1.4rem; }
+        
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; flex: 1; }
+        label { color: var(--primary); font-size: 0.75rem; font-weight: 600; margin-bottom: 5px; display: block; text-transform: uppercase; }
+        
+        input, select {
+            width: 100%; background: #0a192f; border: 1px solid rgba(255,255,255,0.1);
+            color: var(--white); padding: 14px; border-radius: 12px; font-size: 0.95rem;
+        }
+
+        /* OPTIONS DE GAZ (RADIO BOXES) */
+        .radio-group { display: flex; gap: 8px; margin-bottom: 15px; }
+        .radio-box {
+            flex: 1; background: #0a192f; border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 5px; border-radius: 12px; text-align: center; cursor: pointer; font-size: 0.85rem;
+        }
+        .radio-box.active { border-color: var(--primary); background: rgba(241, 196, 15, 0.1); color: var(--primary); font-weight: bold; }
+
+        .preview-box {
+            background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; 
+            margin: 20px 0; text-align: center; border: 1px dashed rgba(255,255,255,0.1);
+        }
+        .preview-box img { max-height: 110px; margin-bottom: 10px; }
+        .preview-info { font-size: 0.8rem; font-weight: bold; color: var(--white); }
+
+        /* HISTORIQUE */
+        .order-card {
+            background: var(--dark-acc); padding: 18px; border-radius: 15px;
+            margin-bottom: 12px; border-left: 5px solid var(--primary);
+        }
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .client-name { font-weight: bold; color: var(--white); font-size: 1rem; }
+        .client-loc { font-size: 0.75rem; color: var(--primary); opacity: 0.9; margin-bottom: 8px; }
+
+        footer { text-align: center; padding: 30px; font-size: 0.75rem; opacity: 0.4; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">GAZ<span>CAMER</span> N'GÉRÉ</div>
+        <div class="nav-links">
+            <button id="nav-accueil" onclick="showSection('accueil')" class="active-nav">Accueil</button>
+            <button id="nav-commande" onclick="showSection('commande')">Réserver</button>
+            <button id="nav-admin" onclick="showSection('admin')">Historique</button>
+        </div>
+    </nav>
+
+    <section id="accueil" class="container active" style="display: flex;">
+        <div class="hero-card">
+            <h1 style="color:white; margin-bottom:10px;">Énergie Fiable à <span style="color:var(--primary)">Ngaoundéré</span></h1>
+            <p>Commandez votre gaz depuis chez vous. Simple, rapide et sécurisé dans toute la ville.</p>
+            <button class="btn-main" onclick="showSection('commande')">Faire une commande</button>
+        </div>
+    </section>
+
+    <section id="commande" class="container">
+        <div class="form-card">
+            <h2>Détails du Client</h2>
+            <form id="orderForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nom</label>
+                        <input type="text" id="nom" placeholder="Moussa" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Prénom</label>
+                        <input type="text" id="prenom" placeholder="Abbo" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Quartier</label>
+                        <input type="text" id="quartier" placeholder="Ex: Dang" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Adresse précise</label>
+                        <input type="text" id="adresse" placeholder="Face au petit marché" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Numéro de téléphone</label>
+                    <input type="tel" id="tel" placeholder="6XXXXXXXX" required pattern="[6][0-9]{8}">
+                </div>
+
+                <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1); margin: 20px 0;">
+
+                <label>Format de bouteille</label>
+                <div class="radio-group" id="formatGroup">
+                    <div class="radio-box active" onclick="setFormat('6kg', this)">6 KG</div>
+                    <div class="radio-box" onclick="setFormat('12.5kg', this)">12.5 KG</div>
+                </div>
+
+                <label>Type de vente</label>
+                <div class="radio-group" id="optionGroup">
+                    <div class="radio-box active" onclick="setOption('Détail', this)">Détail</div>
+                    <div class="radio-box" onclick="setOption('Quantité / Gros', this)">Vente en Gros</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Marque</label>
+                    <select id="marque" onchange="updatePreview()">
+                        <option value="SCTM">SCTM</option>
+                        <option value="Tradex">Tradex</option>
+                        <option value="TotalEnergies">TotalEnergies</option>
+                        <option value="Camgaz">Camgaz</option>
+                    </select>
+                </div>
+
+                <div class="preview-box">
+                    <img id="gaz-img" src="https://i.ibb.co/vz6mD85/sctm-green.png" alt="Gaz">
+                    <div class="preview-info" id="preview-text">SCTM | 6kg | Détail</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Quantité</label>
+                    <input type="number" id="qte" min="1" value="1">
+                </div>
+
+                <button type="submit" class="btn-main">Valider ma réservation</button>
+            </form>
+        </div>
+    </section>
+
+    <section id="admin" class="container">
+        <h2 style="text-align: center; color:white; margin-bottom:25px;">Historique des commandes</h2>
+        <div id="cardsContainer"></div>
+    </section>
+
+    <footer>
+        &copy; 2026 GazCamer Ngaoundéré. <br> Service disponible 24h/24.
+    </footer>
+
+    <script>
+        let selectedFormat = '6kg';
+        let selectedOption = 'Détail';
+        let orders = JSON.parse(localStorage.getItem('ngere_full_orders')) || [];
+
+        const imgs = {
+            'SCTM': 'https://i.ibb.co/vz6mD85/sctm-green.png',
+            'Tradex': 'https://i.ibb.co/N6T0M88/tradex-blue.png',
+            'TotalEnergies': 'https://i.ibb.co/3S4S6G1/total-orange.png',
+            'Camgaz': 'https://i.ibb.co/zH9X4rP/camgaz-yellow.png'
+        };
+
+        function setFormat(val, el) {
+            selectedFormat = val;
+            document.querySelectorAll('#formatGroup .radio-box').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            updatePreview();
+        }
+
+        function setOption(val, el) {
+            selectedOption = val;
+            document.querySelectorAll('#optionGroup .radio-box').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const marque = document.getElementById('marque').value;
+            document.getElementById('gaz-img').src = imgs[marque];
+            document.getElementById('preview-text').innerText = `${marque} | ${selectedFormat} | ${selectedOption}`;
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('section, .container').forEach(s => {
+                s.style.display = 'none';
+                s.classList.remove('active');
+            });
+            
+            const target = document.getElementById(id);
+            target.style.display = (id === 'accueil') ? 'flex' : 'block';
+            target.classList.add('active');
+            
+            document.querySelectorAll('.nav-links button').forEach(b => b.classList.remove('active-nav'));
+            document.getElementById('nav-' + id).classList.add('active-nav');
+            
+            if(id === 'admin') renderOrders();
+            window.scrollTo(0, 0);
+        }
+
+        document.getElementById('orderForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const order = {
+                id: Date.now(),
+                nom: document.getElementById('nom').value,
+                prenom: document.getElementById('prenom').value,
+                quartier: document.getElementById('quartier').value,
+                adresse: document.getElementById('adresse').value,
+                tel: document.getElementById('tel').value,
+                marque: document.getElementById('marque').value,
+                format: selectedFormat,
+                option: selectedOption,
+                qte: document.getElementById('qte').value,
+                date: new Date().toLocaleDateString('fr-FR')
+            };
+            orders.unshift(order);
+            localStorage.setItem('ngere_full_orders', JSON.stringify(orders));
+            alert(`✅ Merci ${order.prenom} ! Votre commande est enregistrée.`);
+            this.reset();
+            showSection('admin');
+        });
+
+        function renderOrders() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = orders.length ? '' : '<p style="text-align:center; opacity:0.5">Aucune commande trouvée.</p>';
+            orders.forEach(o => {
+                container.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="client-name">${o.prenom} ${o.nom}</span>
+                            <span style="color:#2ecc71; font-size:0.7rem; font-weight:bold"><i class="fas fa-check-circle"></i> VALIDÉ</span>
+                        </div>
+                        <div class="client-loc">
+                            <i class="fas fa-map-marker-alt"></i> ${o.quartier} - ${o.adresse}
+                        </div>
+                        <div style="font-size:0.85rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                            <strong>${o.marque}</strong> (${o.format}) - ${o.option}<br>
+                            Quantité : ${o.qte} | <i class="fas fa-phone"></i> ${o.tel}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        updatePreview();
+    </script>
+</body>
+</html>
